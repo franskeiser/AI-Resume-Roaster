@@ -1,11 +1,10 @@
-# Resume Roaster 🔥
+# Resume Roaster 
 
-An AI-powered resume analysis tool that provides brutally honest, Gen Z-style feedback on technical resumes. Built with Spring Boot, React, and Google's Gemini AI.
+An AI-powered resume analysis tool that provides brutally honest feedback on technical resumes. Built with Spring Boot, React, and Google's Gemini AI.
 
 ## Features
 
 - **AI-Powered Analysis**: Uses Google Gemini to analyze resumes with technical, actionable feedback
-- **Gen Z Persona**: Get feedback in a unique, no-BS Gen Z style
 - **PDF Export**: Download your roast report as a PDF
 - **History Tracking**: View all your past resume analyses
 - **Modern UI**: Clean, responsive interface built with React and Tailwind CSS
