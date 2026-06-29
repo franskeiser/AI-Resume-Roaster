@@ -19,11 +19,15 @@ public class GeminiService {
     @Value("${gemini.api.key}")
     private String apiKey;
 
+    // Model is configurable via the GEMINI_MODEL env var so it can be swapped
+    // (e.g. when one model is overloaded) without a code change/rebuild.
+    @Value("${gemini.model:gemini-flash-latest}")
+    private String model;
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // Using v1beta API with gemini-flash-latest
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=";
+    private static final String GEMINI_URL_TEMPLATE = "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s";
 
     public Map<String, Object> analyzeResume(String resumeText) {
         if (resumeText == null || resumeText.trim().isEmpty()) {
@@ -59,7 +63,8 @@ public class GeminiService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
             // Send request (with retry for transient overload/rate-limit errors)
-            ResponseEntity<Map> response = postWithRetry(GEMINI_URL + apiKey, entity);
+            String url = String.format(GEMINI_URL_TEMPLATE, model, apiKey);
+            ResponseEntity<Map> response = postWithRetry(url, entity);
 
             if (response.getBody() == null) {
                 throw new RuntimeException("Empty response from Gemini API");
