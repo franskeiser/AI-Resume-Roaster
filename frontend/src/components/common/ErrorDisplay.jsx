@@ -8,12 +8,18 @@ const getErrorInfo = (raw) => {
     const message = typeof raw === 'string' ? raw : (raw && raw.message) || '';
     const lower = message.toLowerCase();
 
+    if (lower.includes('429') || lower.includes('quota') || lower.includes('resource_exhausted') || lower.includes('rate limit')) {
+        return {
+            title: 'AI usage limit reached',
+            message: 'The AI service has hit its usage limit for now.',
+            suggestions: ['Wait a minute and try again', 'This is a temporary limit, not your file'],
+        };
+    }
     if (lower.includes('503') || lower.includes('high demand') || lower.includes('unavailable') || lower.includes('overload')) {
         return {
             title: 'The AI is a bit busy right now',
             message: 'Our AI model is experiencing high demand. This is usually temporary.',
             suggestions: ['Wait a few seconds and try again', 'Your file was fine — no changes needed'],
-            detail: message,
         };
     }
     if (lower.includes('failed to fetch') || lower.includes('networkerror') || lower.includes('load failed') || lower.includes('cors')) {
@@ -21,7 +27,6 @@ const getErrorInfo = (raw) => {
             title: 'Could not reach the server',
             message: 'We were unable to connect to the Resume Roaster service.',
             suggestions: ['Check your internet connection', 'The server may be waking up — try again in a moment'],
-            detail: message,
         };
     }
     if (lower.includes('413') || lower.includes('too large') || lower.includes('maximum upload size') || lower.includes('exceeds')) {
@@ -29,7 +34,6 @@ const getErrorInfo = (raw) => {
             title: 'That file is too large',
             message: 'Your resume exceeds the 10MB upload limit.',
             suggestions: ['Compress the file or export a smaller PDF', 'Remove large embedded images'],
-            detail: message,
         };
     }
     if (lower.includes('unsupported') || lower.includes('unreadable') || lower.includes('extract') || lower.includes('empty')) {
@@ -37,14 +41,12 @@ const getErrorInfo = (raw) => {
             title: 'We could not read that file',
             message: 'The file could not be processed. It may be empty, corrupted, or an unsupported format.',
             suggestions: ['Use a text-based PDF, DOCX, or TXT', 'Avoid scanned images where possible', 'Make sure the file is not empty'],
-            detail: message,
         };
     }
     return {
         title: 'Something went wrong',
         message: 'We hit an unexpected error while roasting your resume.',
         suggestions: ['Try again', 'Try a different file format'],
-        detail: message,
     };
 };
 
@@ -76,17 +78,6 @@ const ErrorDisplay = ({ error, onRetry }) => {
                     ))}
                 </ul>
             </div>
-
-            {info.detail && (
-                <details className="mb-6 text-sm">
-                    <summary className="cursor-pointer text-gray-500 hover:text-gray-700">
-                        Technical details
-                    </summary>
-                    <p className="mt-2 break-words font-mono text-xs text-gray-500 bg-gray-100 p-3 rounded-lg">
-                        {info.detail}
-                    </p>
-                </details>
-            )}
 
             <div className="flex justify-center">
                 <Button onClick={onRetry} variant="primary">
