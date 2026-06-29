@@ -16,11 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Paths;
-import com.resumeroaster.dto.ResumeSummaryDTO;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/resumes")
@@ -113,28 +109,4 @@ public class ResumeController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Analysis> getAnalysis(@PathVariable Long id) {
-        return analysisRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new Exceptions.BadRequestException("Analysis not found"));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ResumeSummaryDTO>> getAllResumes() {
-        return ResponseEntity.ok(
-                resumeRepository.findAll().stream()
-                        .map(resume -> new ResumeSummaryDTO(
-                                resume.getId(),
-                                resume.getOriginalFilename(),
-                                resume.getUploadedAt(),
-                                resume.getAnalysis() != null ? resume.getAnalysis().getOverallScore() : null,
-                                resume.getAnalysis() != null && resume.getAnalysis().getSummary() != null
-                                        ? (resume.getAnalysis().getSummary().length() > 100
-                                                ? resume.getAnalysis().getSummary().substring(0, 100) + "..."
-                                                : resume.getAnalysis().getSummary())
-                                        : "Processing..."))
-                        .sorted(Comparator.comparing(ResumeSummaryDTO::getUploadedAt).reversed())
-                        .collect(Collectors.toList()));
-    }
 }

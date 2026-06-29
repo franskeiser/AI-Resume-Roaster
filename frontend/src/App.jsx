@@ -7,8 +7,6 @@ import ActionableList from './components/analysis/ActionableList';
 import ErrorDisplay from './components/common/ErrorDisplay';
 import Loader from './components/common/Loader';
 import { analyzeResume, exportAnalysisPdf } from './services/api';
-import HistoryPage from './pages/HistoryPage';
-import RoastPage from './pages/RoastPage';
 
 function HomePage() {
     const [analysis, setAnalysis] = useState(null);
@@ -104,9 +102,6 @@ function App() {
                                     <Link to="/" className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700">
                                         Roast New
                                     </Link>
-                                    <Link to="/history" className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700">
-                                        History
-                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -116,8 +111,6 @@ function App() {
                 <div className="py-12 px-4 sm:px-6 lg:px-8">
                     <Routes>
                         <Route path="/" element={<HomePage />} />
-                        <Route path="/history" element={<HistoryPage />} />
-                        <Route path="/roast/:id" element={<RoastPage />} />
                     </Routes>
                 </div>
             </div>

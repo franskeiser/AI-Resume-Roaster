@@ -50,18 +50,3 @@ export const exportAnalysisPdf = async (id) => {
     }
 };
 
-export const getAnalysis = async (id) => {
-    const response = await fetch(`${API_URL}/resumes/${id}`);
-    if (!response.ok) {
-        throw new Error('Failed to fetch analysis');
-    }
-    return await response.json();
-};
-
-export const getAllResumes = async () => {
-    const response = await fetch(`${API_URL}/resumes`);
-    if (!response.ok) {
-        throw new Error('Failed to fetch history');
-    }
-    return await response.json();
-};
