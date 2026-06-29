@@ -4,26 +4,22 @@ export const analyzeResume = async (file) => {
     const formData = new FormData();
     formData.append('resume', file);
 
-    try {
-        const response = await fetch(`${API_URL}/resumes/analyze`, {
-            method: 'POST',
-            body: formData,
-        });
+    const response = await fetch(`${API_URL}/resumes/analyze`, {
+        method: 'POST',
+        body: formData,
+    });
 
-        if (!response.ok) {
-            let errorData;
-            try {
-                errorData = await response.json();
-            } catch (e) {
-                errorData = { message: response.statusText };
-            }
-            throw new Error(errorData.message || 'Analysis failed');
+    if (!response.ok) {
+        let errorData;
+        try {
+            errorData = await response.json();
+        } catch (e) {
+            errorData = { message: response.statusText };
         }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
+        throw new Error(errorData.message || 'Analysis failed');
     }
+
+    return await response.json();
 };
 
 export const exportAnalysisPdf = async (id) => {
@@ -53,26 +49,19 @@ export const exportAnalysisPdf = async (id) => {
         throw error;
     }
 };
+
 export const getAnalysis = async (id) => {
-    try {
-        const response = await fetch(`${API_URL}/resumes/${id}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch analysis');
-        }
-        return await response.json();
-    } catch (error) {
-        throw error;
+    const response = await fetch(`${API_URL}/resumes/${id}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch analysis');
     }
+    return await response.json();
 };
 
 export const getAllResumes = async () => {
-    try {
-        const response = await fetch(`${API_URL}/resumes`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch history');
-        }
-        return await response.json();
-    } catch (error) {
-        throw error;
+    const response = await fetch(`${API_URL}/resumes`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch history');
     }
+    return await response.json();
 };

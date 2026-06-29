@@ -14,7 +14,7 @@ import java.util.*;
 @Service
 public class OpenAIService {
 
-    @Value("${openai.api.key}")
+    @Value("${openai.api.key:}")
     private String apiKey;
 
     private final RestTemplate restTemplate = new RestTemplate();

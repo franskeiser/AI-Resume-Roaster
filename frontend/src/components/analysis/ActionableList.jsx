@@ -9,7 +9,7 @@ const ActionableList = ({ fixes }) => {
                 Action Items
             </h3>
             <p className="text-gray-500 mb-8 font-medium">
-                Here's what you actually need to fix (no cap):
+                Here&apos;s what you actually need to fix (no cap):
             </p>
 
             <div className="space-y-6">

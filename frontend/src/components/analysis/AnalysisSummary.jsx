@@ -9,7 +9,7 @@ const AnalysisSummary = ({ summary, sections }) => {
                     🔥
                 </div>
                 <div className="flex-1">
-                    <h3 className="text-2xl font-bold mb-3 text-gray-900">AI's Honest Take</h3>
+                    <h3 className="text-2xl font-bold mb-3 text-gray-900">AI&apos;s Honest Take</h3>
                     <p className="text-gray-700 leading-relaxed whitespace-pre-wrap text-lg">
                         {summary}
                     </p>

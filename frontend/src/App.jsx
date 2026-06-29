@@ -7,7 +7,6 @@ import ActionableList from './components/analysis/ActionableList';
 import ErrorDisplay from './components/common/ErrorDisplay';
 import Loader from './components/common/Loader';
 import { analyzeResume, exportAnalysisPdf } from './services/api';
-import Navbar from './components/common/Navbar';
 import HistoryPage from './pages/HistoryPage';
 import RoastPage from './pages/RoastPage';
 

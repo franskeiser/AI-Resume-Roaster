@@ -7,6 +7,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -56,8 +58,8 @@ public class GeminiService {
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-            // Send request
-            ResponseEntity<Map> response = restTemplate.postForEntity(GEMINI_URL + apiKey, entity, Map.class);
+            // Send request (with retry for transient overload/rate-limit errors)
+            ResponseEntity<Map> response = postWithRetry(GEMINI_URL + apiKey, entity);
 
             if (response.getBody() == null) {
                 throw new RuntimeException("Empty response from Gemini API");
@@ -89,6 +91,34 @@ public class GeminiService {
             e.printStackTrace();
             throw new RuntimeException("Failed to analyze resume with Gemini: " + e.getMessage());
         }
+    }
+
+    /**
+     * Posts to Gemini, retrying on transient errors (503 overload, 429 rate
+     * limit, other 5xx) with exponential backoff. Non-transient errors are
+     * rethrown immediately.
+     */
+    private ResponseEntity<Map> postWithRetry(String url, HttpEntity<Map<String, Object>> entity) {
+        int maxAttempts = 4;
+        long backoffMs = 1000;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                return restTemplate.postForEntity(url, entity, Map.class);
+            } catch (HttpServerErrorException | HttpClientErrorException.TooManyRequests e) {
+                // 5xx (incl. 503 overload) and 429 are transient — worth retrying.
+                if (attempt == maxAttempts) {
+                    throw e;
+                }
+                try {
+                    Thread.sleep(backoffMs);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted while retrying Gemini request", ie);
+                }
+                backoffMs *= 2;
+            }
+        }
+        throw new RuntimeException("Gemini request failed after " + maxAttempts + " attempts");
     }
 
     private String getSystemPrompt() {
